@@ -11,8 +11,6 @@ public interface IPecaService {
 	
 	public MensagemDto alteraPeca(Long codigoBarra, Peca peca);
 	
-	public MensagemDto realizaVenda(Long codigoBarra, int quantidade);
-	
 	public Peca buscaPeca(Long codigoBarra);
 	
 	public List<Peca> listarPecas();
