@@ -1,77 +1,69 @@
 package br.com.zup.estrelas.lojapecas.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.zup.estrelas.lojapecas.dto.AlteraPecaDTO;
-import br.com.zup.estrelas.lojapecas.dto.MensagemDTO;
+import br.com.zup.estrelas.lojapecas.dto.MensagemDto;
 import br.com.zup.estrelas.lojapecas.entity.Peca;
 import br.com.zup.estrelas.lojapecas.repository.PecaRepository;
 
 @Service
 public class PecaService implements IPecaService {
+	private final static String PECA_CADASTRADA_COM_SUCESSO = ("Peca cadastrada com sucesso");
+	private final static String PECA_ALTERADA_COM_SUCESSO = ("Peca alterada com sucesso");
+	private final static String PECA_EXCLUIDA_COM_SUCESSO = ("Peca excluida com sucesso");
+	private final static String PECA_INEXISTENTE = ("Peça inexistente, não foi possivel realizar a operação");
+	private final static String PECA_NAO_CADASTRADA = ("Nao foi possivel cadastrar peça");
 
-    private static final String PECA_ALTERADA_COM_SUCESSO = "Peça alterada com sucesso.";
-    private static final String PECA_REMOVIDA_COM_SUCESSO = "Peça removida com sucesso!";
-    private static final String PECA_JA_CADASTRADA = "O cadastro não ocorreu, peça já está cadastrada";
-    private static final String CADASTRO_REALIZADO_COM_SUCESSO = "Cadastro realizado com sucesso.";
-    private static final String PECA_INEXISTENTE = "Peça inexistente.";
+	@Autowired
+	PecaRepository repository;
 
-    @Autowired
-    PecaRepository pecaRepository;
+	public MensagemDto adicionaPeca(Peca peca) {
+		if (repository.existsById(peca.getCodigoBarra())) {
+			return new MensagemDto(PECA_NAO_CADASTRADA);
+		}
 
-    public MensagemDTO adicionaPeca(Peca peca) {
+		repository.save(peca);
+		return new MensagemDto(PECA_CADASTRADA_COM_SUCESSO);
+	}
 
-        if (pecaRepository.existsById(peca.getCodBarras())) {
-            return new MensagemDTO(PECA_JA_CADASTRADA);
-        }
+	public MensagemDto removePeca(Long codigoBarra) {
+		if (repository.existsById(codigoBarra)) {
+			repository.deleteById(codigoBarra);
+			return new MensagemDto(PECA_EXCLUIDA_COM_SUCESSO);
+		}
+		return new MensagemDto(PECA_INEXISTENTE);
+	}
 
-        pecaRepository.save(peca);
-        return new MensagemDTO(CADASTRO_REALIZADO_COM_SUCESSO);
-    }
+	public MensagemDto alteraPeca(Long codigoBarra, Peca peca) {
 
-    public Peca buscaPeca(Long codBarras) {
-        return pecaRepository.findById(codBarras).get();
-    }
+		if (repository.existsById(codigoBarra) && codigoBarra.equals(peca.getCodigoBarra())) {
+			repository.save(peca);
+			return new MensagemDto(PECA_ALTERADA_COM_SUCESSO);
+		}
 
-    public List<Peca> listaPecas() {
-        return (List<Peca>) pecaRepository.findAll();
-    }
+		return new MensagemDto(PECA_INEXISTENTE);
+	}
 
-    public MensagemDTO removePeca(Long codBarras) {
+	public Peca buscaPeca(Long codigoBarra) {
+		return repository.findById(codigoBarra).get();
+	}
 
-        if (pecaRepository.existsById(codBarras)) {
-            pecaRepository.deleteById(codBarras);
-            return new MensagemDTO(PECA_REMOVIDA_COM_SUCESSO);
-        }
+	public List<Peca> listarPecas() {
+		return (List<Peca>) repository.findAll();
+	}
 
-        return new MensagemDTO(PECA_INEXISTENTE);
-    }
+	public List<Peca> buscarPecaPorNome(String nome) {
+		return repository.findByNome(nome);
+	}
 
-    public MensagemDTO alteraPeca(Long codBarras, AlteraPecaDTO alteraPecaDTO) {
+	public List<Peca> buscarPecaPorModelo(String modelo) {
+		return repository.findByModelo(modelo);
+	}
 
-        Optional<Peca> pecaConsultada = pecaRepository.findById(codBarras);
-
-        if (pecaConsultada.isPresent()) {
-
-            Peca pecaAlterada = pecaConsultada.get();
-
-            pecaAlterada.setCategoria(alteraPecaDTO.getCategoria());
-            pecaAlterada.setFabricante(alteraPecaDTO.getFabricante());
-            pecaAlterada.setModelo(alteraPecaDTO.getModelo());
-            pecaAlterada.setNome(alteraPecaDTO.getNome());
-            pecaAlterada.setPrecoCusto(alteraPecaDTO.getPrecoCusto());
-            pecaAlterada.setPrecoVenda(alteraPecaDTO.getPrecoVenda());
-            pecaAlterada.setQtdEstoque(alteraPecaDTO.getQtdEstoque());
-
-            pecaRepository.save(pecaAlterada);
-            return new MensagemDTO(PECA_ALTERADA_COM_SUCESSO);
-        }
-
-        return new MensagemDTO(PECA_INEXISTENTE);
-    }
-
+	public List<Peca> buscarPecaPorCategoria(String categoria) {
+		return repository.findByCategoria(categoria);
+	}
 }
