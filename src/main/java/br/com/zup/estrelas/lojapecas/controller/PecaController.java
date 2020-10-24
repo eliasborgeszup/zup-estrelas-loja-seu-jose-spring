@@ -41,6 +41,12 @@ public class PecaController {
 		return pecaService.alteraPeca(codigoBarra, peca);
 	}
 	
+	//host:8080/00002/2 -> Variable, Variable ALTER
+	@PutMapping (path = "/{codigoBarra}/{quantidade}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	public MensagemDto realizarVenda(@PathVariable Long codigoBarra, @PathVariable int quantidade) {
+		return pecaService.realizaVenda(codigoBarra, quantidade);
+	}
+	
 	//host:8080/00003 -> Variable LIST BY ID
 	@GetMapping (path = "/{codigoBarra}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Peca buscaPeca(@PathVariable Long codigoBarra) {
@@ -70,4 +76,7 @@ public class PecaController {
 	public List<Peca> buscaPecaPorCategoria(@PathVariable String categoria) {
 		return pecaService.buscarPecaPorCategoria(categoria);
 	}
+	
+	
+	
 }
