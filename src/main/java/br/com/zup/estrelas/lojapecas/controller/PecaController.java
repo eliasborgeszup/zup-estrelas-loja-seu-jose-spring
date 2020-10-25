@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.zup.estrelas.lojapecas.dto.MensagemDto;
-import br.com.zup.estrelas.lojapecas.dto.VendaDto;
 import br.com.zup.estrelas.lojapecas.entity.Peca;
+import br.com.zup.estrelas.lojapecas.entity.Venda;
 import br.com.zup.estrelas.lojapecas.service.IPecaService;
 
 @RestController
